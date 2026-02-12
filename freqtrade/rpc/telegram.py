@@ -32,6 +32,7 @@ from telegram import (
 from telegram.constants import MessageLimit, ParseMode
 from telegram.error import BadRequest, NetworkError, TelegramError
 from telegram.ext import Application, CallbackContext, CallbackQueryHandler, CommandHandler
+from telegram.request import HTTPXRequest
 from telegram.helpers import escape_markdown
 
 from freqtrade.__init__ import __version__
@@ -245,6 +246,18 @@ class Telegram(RPCHandler):
                 logger.info(f"using custom keyboard from config.json: {self._keyboard}")
 
     def _init_telegram_app(self):
+        proxy_url = self._config.get("telegram", {}).get("proxy_url", "")
+        if proxy_url:
+            logger.info(f"Using Telegram proxy: {proxy_url}")
+            request = HTTPXRequest(proxy=proxy_url, connection_pool_size=8)
+            get_updates_request = HTTPXRequest(proxy=proxy_url, connection_pool_size=8)
+            return (
+                Application.builder()
+                .token(self._config["telegram"]["token"])
+                .request(request)
+                .get_updates_request(get_updates_request)
+                .build()
+            )
         return Application.builder().token(self._config["telegram"]["token"]).build()
 
     def _init(self) -> None:
