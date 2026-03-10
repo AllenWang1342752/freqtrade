@@ -32,8 +32,8 @@ from telegram import (
 from telegram.constants import MessageLimit, ParseMode
 from telegram.error import BadRequest, NetworkError, TelegramError
 from telegram.ext import Application, CallbackContext, CallbackQueryHandler, CommandHandler
-from telegram.request import HTTPXRequest
 from telegram.helpers import escape_markdown
+from telegram.request import HTTPXRequest
 
 from freqtrade.__init__ import __version__
 from freqtrade.constants import DUST_PER_COIN, Config
